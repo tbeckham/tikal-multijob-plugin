@@ -23,6 +23,15 @@
 	              		</j:when>
 	              	</j:choose>
 	 			</td>
+	 			<td class="no-wrap">
+                	<j:choose>
+                		 <j:when test="${builder.url.length() > 0}">
+                			<a href="${rootURL}/${builder.url}/console">
+                		        console
+                		    </a>
+                	     </j:when>
+                	</j:choose>
+                </td>
 	 			<td class="no-wrap">( ${builder.duration} )</td>
 	 		</tr>
      </j:forEach>
