@@ -140,7 +140,8 @@ public class MultiJobBuild extends Build<MultiJobProject, MultiJobBuild> {
 		SubBuild subBuild = new SubBuild(parentJobName, parentBuildNumber,
 				jobName, buildNumber, phaseName);
 		for (SubBuild subbuild : getSubBuilds()) {
-			if (subbuild.getJobName().equals(jobName)) {
+            // Only remove the build from the sub builds if it is in the same phase
+			if (subbuild.getJobName().equals(jobName) && subbuild.getPhaseName().equals(phaseName)) {
 				getSubBuilds().remove(subbuild);
 				break;
 			}
