@@ -156,7 +156,8 @@ public class MultiJobBuilder extends Builder implements DependecyDeclarer {
 			for (Future future : futuresList)
 				future.cancel(true);
 		}
-		canContinue = !failed;
+        //Always continue
+		//canContinue = !failed;
 		return canContinue;
 	}
 
