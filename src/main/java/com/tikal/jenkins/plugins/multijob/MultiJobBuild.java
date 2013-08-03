@@ -13,6 +13,8 @@ import hudson.scm.ChangeLogSet.Entry;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,6 +110,9 @@ public class MultiJobBuild extends Build<MultiJobProject, MultiJobBuild> {
 				subBuild.setIcon(build.getIconColor().getImage());
 				subBuild.setDuration(build.getDurationString());
 				subBuild.setUrl(build.getUrl());
+                Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String date = formatter.format(build.getTimestamp().getTime());
+                subBuild.setStartTimeString(date);
 			} else {
 				subBuild.setIcon(BallColor.NOTBUILT.getImage());
 				subBuild.setDuration("not built yet");
@@ -119,15 +124,19 @@ public class MultiJobBuild extends Build<MultiJobProject, MultiJobBuild> {
 
 	private Run getBuild(SubBuild subBuild) {
 		Run build = null;
+
+        // Get all of the downstream projects of this one
 		List<AbstractProject> downstreamProjects = getProject()
 				.getDownstreamProjects();
+        // Iterate through downstream projects
 		for (AbstractProject downstreamProject : downstreamProjects) {
+            // get list of upstream projects for this downstream project
 			List upstreamProjects = downstreamProject.getUpstreamProjects();
+            // If one of the upstream projects is this one
 			if (upstreamProjects.contains(getProject())) {
-				if (subBuild.getJobName().equalsIgnoreCase(
-						downstreamProject.getName())) {
-					build = downstreamProject.getBuildByNumber(subBuild
-							.getBuildNumber());
+                // and it has the same name as the build im looking for
+				if (subBuild.getJobName().equalsIgnoreCase(downstreamProject.getName())) {
+					build = downstreamProject.getBuildByNumber(subBuild.getBuildNumber());
 				}
 			}
 		}
@@ -169,6 +178,7 @@ public class MultiJobBuild extends Build<MultiJobProject, MultiJobBuild> {
 		private String icon;
 		private String duration;
 		private String url;
+        private String startTimeString;
 
 		public SubBuild(String parentJobName, int parentBuildNumber,
 				String jobName, int buildNumber, String phaseName) {
@@ -231,11 +241,19 @@ public class MultiJobBuild extends Build<MultiJobProject, MultiJobBuild> {
 			return result;
 		}
 
+        public String getStartTimeString() {
+            return startTimeString;
+        }
+
+        public void setStartTimeString(String startTimeString) {
+            this.startTimeString = startTimeString;
+        }
+
 		@Override
 		public String toString() {
 			return "SubBuild [parentJobName=" + parentJobName
 					+ ", parentBuildNumber=" + parentBuildNumber + ", jobName="
 					+ jobName + ", buildNumber=" + buildNumber + "]";
 		}
-	}
+    }
 }

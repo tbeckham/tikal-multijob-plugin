@@ -26,8 +26,8 @@
 	 			<td class="no-wrap">
                 	<j:choose>
                 		 <j:when test="${builder.url.length() > 0}">
-                			<a href="${rootURL}/${builder.url}/console">
-                		        console
+                			<a href="${rootURL}/${builder.url}console">
+                		        ${builder.startTimeString}
                 		    </a>
                 	     </j:when>
                 	</j:choose>
