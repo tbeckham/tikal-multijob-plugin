@@ -63,12 +63,14 @@ public class MultiJobBuilder extends Builder implements DependecyDeclarer {
 		MultiJobProject thisProject = thisBuild.getProject();
 		Map<AbstractProjectKey, PhaseJobsConfig> projects = new HashMap<AbstractProjectKey, PhaseJobsConfig>(
 				phaseJobs.size());
-
+        Map<AbstractProject, Integer> projectBuilds = new HashMap<AbstractProject, Integer>(
+                phaseJobs.size());
 		for (PhaseJobsConfig project : phaseJobs) {
 			TopLevelItem item = hudson.getItem(project.getJobName());
 			if (item instanceof AbstractProject) {
 				AbstractProject job = (AbstractProject) item;
 				projects.put(new AbstractProjectKey(job), project);
+                projectBuilds.put(job, job.getNextBuildNumber());
 			}
 		}
 
@@ -140,7 +142,7 @@ public class MultiJobBuilder extends Builder implements DependecyDeclarer {
 					}
 				} else if (project.isBuilding()) {
 					addSubBuild(thisBuild, thisProject,
-							(AbstractBuild) project.getLastBuild());
+							(AbstractBuild) project.getBuildByNumber(projectBuilds.get(project).intValue()));
 				}
 			}
 			// Wait a second before next check.
