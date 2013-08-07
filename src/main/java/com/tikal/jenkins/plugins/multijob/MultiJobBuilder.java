@@ -79,9 +79,9 @@ public class MultiJobBuilder extends Builder implements DependecyDeclarer {
 		for (AbstractProjectKey projectKey : projects.keySet()) {
 			AbstractProject project = projectKey.getProject();
 			listener.getLogger().printf(
-					"Starting build job %s.\n",
+					"Starting build job %s\n",
 					HyperlinkNote.encodeTo('/' + project.getUrl(),
-							project.getFullName()));
+							project.getFullName() + " " + projectBuilds.get(project).toString()));
 
 			PhaseJobsConfig projectConfig = projects.get(projectKey);
 			List<Action> actions = new ArrayList<Action>();
@@ -141,9 +141,11 @@ public class MultiJobBuilder extends Builder implements DependecyDeclarer {
 						failed = true;
 					}
 				} else if (project.isBuilding()) {
-					addSubBuild(thisBuild, thisProject,
-							(AbstractBuild) project.getBuildByNumber(projectBuilds.get(project).intValue()));
-				}
+                    AbstractBuild currentBuild = (AbstractBuild) project.getBuildByNumber(projectBuilds.get(project).intValue());
+					if( currentBuild != null){
+                        addSubBuild(thisBuild, thisProject, currentBuild);
+                    }
+                }
 			}
 			// Wait a second before next check.
 			try{
